@@ -79,7 +79,7 @@ function closeModal(modal) {
 }
 
 function filterSearch(searchInput) {
-    filteredEmployees = employees.filter(employee => employee.name.first.includes(searchInput.value));
+    filteredEmployees = employees.filter(employee => `${employee.name.first.toLowerCase()} + ${employee.name.last.toLowerCase()}`.includes(searchInput.value.toLowerCase()));
     console.log(filteredEmployees);
 }
 
@@ -107,7 +107,8 @@ fetch(APIurl)
     .then(results => results.json())
     .then(results => results.results)
     .then(results => employees = results)
-    .then(results => addCardstoDOM(employees))
+    .then(results => filteredEmployees = employees)
+    .then(results => addCardstoDOM(filteredEmployees))
     .catch(results => Error(console.log(results)))
     .finally(appendSearch(filterSearch));
 
@@ -119,7 +120,7 @@ cardContainer.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
         modalIndex = parseInt(card.getAttribute('data-index'));
         console.log(modalIndex);
-        body.insertAdjacentHTML('beforeend', createModal(employees, modalIndex));
+        body.insertAdjacentHTML('beforeend', createModal(filteredEmployees, modalIndex));
         const modalContainer = document.querySelector('.modal-container');
         const contentContainer = document.querySelector('.modal-info-container');
         const modalClose = document.getElementById('modal-close-btn');
@@ -128,13 +129,14 @@ cardContainer.addEventListener('click', (e) => {
         prev.addEventListener('click', () => {
             if (modalIndex > 0) {
                 modalIndex = modalIndex - 1;
-                toggleModal(employees, contentContainer, modalIndex);
+                toggleModal(filteredEmployees, contentContainer, modalIndex);
             }
         });
         next.addEventListener('click', () => {
-            if (modalIndex < 11) {
+            if (modalIndex < filteredEmployees.length -1) {
                 modalIndex = modalIndex + 1;
-                toggleModal(employees, contentContainer, modalIndex);
+                console.log(modalIndex);
+                toggleModal(filteredEmployees, contentContainer, modalIndex);
             }
         });
         modalClose.addEventListener('click', () => {
