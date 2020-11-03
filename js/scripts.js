@@ -3,16 +3,21 @@
 /* ============================================= */
 
 const APIurl = `https://randomuser.me/api/?results=12&inc=name,
-picture,email,location,dob,phone&noinfo`;
+picture,email,location,dob,phone&noinfo&nat=US`;
+const body = document.getElementsByTagName('BODY')[0];
 const cardContainer = document.getElementById('gallery');
-let employees;
+let employees = [];
+let modalIndex;
+let modalClose;
+let prev;
+let next;
 
 function addCardstoDOM(fetchResults) {
     console.log(fetchResults);
     let cardDiv = '';
-    fetchResults.forEach(result => {
+    fetchResults.forEach((result, index) => {
         cardDiv += `
-            <div class="card">
+            <div class="card" data-index=${index}>
                 <div class="card-img-container">
                     <img class="card-img" src="${result.picture.large}" alt="profile picture">
                 </div>
@@ -27,8 +32,10 @@ function addCardstoDOM(fetchResults) {
     cardContainer.insertAdjacentHTML("beforeend", cardDiv);
 }
 
-function addModal(employeeData, index) {
-    const body = document.getElementsByTagName('BODY')[0];
+function createModal(employeeData, index) {
+    let phone = employeeData[index].phone;
+    phone = phone.replace(/\D+/g, '')
+                 .replace(/(\d{3})(\d{3})(\d{4})/g, '($1) $2-$3');
     let modalContents = `
         <div class="modal-container">
             <div class="modal">
@@ -39,7 +46,7 @@ function addModal(employeeData, index) {
                     <p class="modal-text">${employeeData[index].email}</p>
                     <p class="modal-text cap">${employeeData[index].location.city}</p>
                     <hr>
-                    <p class="modal-text">(555) 555-5555</p>
+                    <p class="modal-text">${employeeData[index].phone}</p>
                     <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
                     <p class="modal-text">Birthday: 10/21/2015</p>
                 </div>
@@ -51,7 +58,7 @@ function addModal(employeeData, index) {
             </div>
         </div>
     `;
-    body.insertAdjacentHTML('beforeend', modalContents);
+    return modalContents;
 }
 
 
@@ -68,8 +75,18 @@ fetch(APIurl)
     .catch(results => Error(console.log(results)));
 
 
+
+    
 cardContainer.addEventListener('click', (e) => {
-    let pick = e.target.closest('div').parentElement;
-    console.log(pick)
-    addModal(employees, [0]);
+    if (e.target !== cardContainer) {
+        const card = e.target.closest('.card');
+        let index = card.getAttribute('data-index');
+        body.insertAdjacentHTML('beforeend', createModal(employees, index));
+        const modalContainer = document.querySelector('.modal-container');
+        modalClose = document.getElementById('modal-close-btn');
+        modalClose.addEventListener('click', () => {
+            body.removeChild(modalContainer);
+            });
+    }
 });
+
