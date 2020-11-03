@@ -136,7 +136,6 @@ fetch(APIurl)
     .then(results => employees = results)
     .then(results => filteredEmployees = employees)
     .then(results => addCardstoDOM(filteredEmployees))
-    .then(results => console.log(filteredEmployees))
     .catch(results => Error(console.log(results)))
     .finally(appendSearch(filterSearch));
 
