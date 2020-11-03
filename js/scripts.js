@@ -72,7 +72,21 @@ function toggleModal(employeeData, contentContainer, index) {
     `
 }
 
+function closeModal(modal) {
+    body.removeChild(modal);
+}
 
+
+function appendSearch() {
+    const searchContainer = document.querySelector('.search-container');
+    let html = `
+        <form action="#" method="get">
+            <input type="search" id="search-input" class="search-input" placeholder="Search...">
+            <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+        </form>
+    `;
+    searchContainer.insertAdjacentHTML('beforeend', html);
+}
 
 
 fetch(APIurl)
@@ -80,7 +94,8 @@ fetch(APIurl)
     .then(results => results.results)
     .then(results => employees = results)
     .then(results => addCardstoDOM(employees))
-    .catch(results => Error(console.log(results)));
+    .catch(results => Error(console.log(results)))
+    .finally(appendSearch());
 
 
 
@@ -109,7 +124,7 @@ cardContainer.addEventListener('click', (e) => {
             }
         });
         modalClose.addEventListener('click', () => {
-            body.removeChild(modalContainer);
+            closeModal(modalContainer);
             });
     }
 });
