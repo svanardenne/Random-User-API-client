@@ -2,6 +2,7 @@
 /*                   Scripts                     */
 /* ============================================= */
 
+//Global variables
 const APIurl = `https://randomuser.me/api/?results=12&inc=name,
 picture,email,location,dob,phone&noinfo&nat=US`;
 const body = document.getElementsByTagName('BODY')[0];
@@ -10,8 +11,14 @@ let employees = [];
 let filteredEmployees = [];
 let modalIndex;
 
+
+
+/* ============================================= */
+/*                  Functions                    */
+/* ============================================= */
+
+//Creates HTML based on api array and index
 function addCardstoDOM(fetchResults) {
-    console.log(fetchResults);
     let cardDiv = '';
     fetchResults.forEach((result, index) => {
         cardDiv += `
@@ -31,10 +38,12 @@ function addCardstoDOM(fetchResults) {
     cardContainer.insertAdjacentHTML("beforeend", cardDiv);
 }
 
+//Creates the modal div 
 function createModal(employeeData, index) {
     let phone = employeeData[index].phone;
     phone = phone.replace(/\D+/g, '')
                  .replace(/(\d{3})(\d{3})(\d{4})/g, '($1) $2-$3');
+                 let date = new Date(employeeData[index].dob.date);
     let modalContents = `
         <div class="modal-container">
             <div class="modal">
@@ -46,8 +55,14 @@ function createModal(employeeData, index) {
                     <p class="modal-text cap">${employeeData[index].location.city}</p>
                     <hr>
                     <p class="modal-text">${employeeData[index].phone}</p>
-                    <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-                    <p class="modal-text">Birthday: 10/21/2015</p>
+                    <p class="modal-text">
+                    ${employeeData[index].location.street.number} 
+                    ${employeeData[index].location.street.name}, 
+                    ${employeeData[index].location.city}, ${employeeData[index].location.state} ${employeeData[index].location.postcode}
+                    </p>
+                    <p class="modal-text">Birthday: 
+                    ${date.getMonth()}/${date.getDate()}/${date.getFullYear()}
+                    </p>
                 </div>
             </div>
 
@@ -60,8 +75,9 @@ function createModal(employeeData, index) {
     return modalContents;
 }
 
-
+//Changes the content in the modal window
 function toggleModal(employeeData, contentContainer, index) {
+    let date = new Date(employeeData[index].dob.date);
     contentContainer.innerHTML = `
         <img class="modal-img" src="${employeeData[index].picture.large}" alt="profile picture">
         <h3 id="name" class="modal-name cap">${employeeData[index].name.first} ${employeeData[index].name.last}</h3>
@@ -69,21 +85,28 @@ function toggleModal(employeeData, contentContainer, index) {
         <p class="modal-text cap">${employeeData[index].location.city}</p>
         <hr>
         <p class="modal-text">${employeeData[index].phone}</p>
-        <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-        <p class="modal-text">Birthday: 10/21/2015</p>
+        <p class="modal-text">
+        ${employeeData[index].location.street.number} 
+        ${employeeData[index].location.street.name}, 
+        ${employeeData[index].location.city}, ${employeeData[index].location.state} ${employeeData[index].location.postcode}
+        </p>
+        <p class="modal-text">Birthday: 
+        ${date.getMonth()}/${date.getDate()}/${date.getFullYear()}
+        </p>
     `
 }
 
+//Closes the modal window
 function closeModal(modal) {
     body.removeChild(modal);
 }
 
+//Filters the fetched array
 function filterSearch(searchInput) {
     filteredEmployees = employees.filter(employee => `${employee.name.first.toLowerCase()} + ${employee.name.last.toLowerCase()}`.includes(searchInput.value.toLowerCase()));
-    console.log(filteredEmployees);
 }
 
-
+//Appends the search bar to the DOM
 function appendSearch(filterSearch) {
     const searchContainer = document.querySelector('.search-container');
     let html = `
@@ -102,24 +125,31 @@ function appendSearch(filterSearch) {
     });
 }
 
+/* ============================================= */
+/*                   AJAX                        */
+/* ============================================= */
 
+//Fetches data from the RandomUser API, returns it, and appends cards and searchbar to the DOM
 fetch(APIurl)
     .then(results => results.json())
     .then(results => results.results)
     .then(results => employees = results)
     .then(results => filteredEmployees = employees)
     .then(results => addCardstoDOM(filteredEmployees))
+    .then(results => console.log(filteredEmployees))
     .catch(results => Error(console.log(results)))
     .finally(appendSearch(filterSearch));
 
 
+/* ============================================= */
+/*            Global Event Listener              */
+/* ============================================= */
 
-    
+
 cardContainer.addEventListener('click', (e) => {
     if (e.target !== cardContainer) {
         const card = e.target.closest('.card');
         modalIndex = parseInt(card.getAttribute('data-index'));
-        console.log(modalIndex);
         body.insertAdjacentHTML('beforeend', createModal(filteredEmployees, modalIndex));
         const modalContainer = document.querySelector('.modal-container');
         const contentContainer = document.querySelector('.modal-info-container');
@@ -135,7 +165,6 @@ cardContainer.addEventListener('click', (e) => {
         next.addEventListener('click', () => {
             if (modalIndex < filteredEmployees.length -1) {
                 modalIndex = modalIndex + 1;
-                console.log(modalIndex);
                 toggleModal(filteredEmployees, contentContainer, modalIndex);
             }
         });
