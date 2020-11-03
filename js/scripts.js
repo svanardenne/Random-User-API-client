@@ -7,6 +7,7 @@ picture,email,location,dob,phone&noinfo&nat=US`;
 const body = document.getElementsByTagName('BODY')[0];
 const cardContainer = document.getElementById('gallery');
 let employees = [];
+let filteredEmployees = [];
 let modalIndex;
 
 function addCardstoDOM(fetchResults) {
@@ -26,6 +27,7 @@ function addCardstoDOM(fetchResults) {
             </div>
         `
     });
+    cardContainer.innerHTML = '';
     cardContainer.insertAdjacentHTML("beforeend", cardDiv);
 }
 
@@ -76,8 +78,13 @@ function closeModal(modal) {
     body.removeChild(modal);
 }
 
+function filterSearch(searchInput) {
+    filteredEmployees = employees.filter(employee => employee.name.first.includes(searchInput.value));
+    console.log(filteredEmployees);
+}
 
-function appendSearch() {
+
+function appendSearch(filterSearch) {
     const searchContainer = document.querySelector('.search-container');
     let html = `
         <form action="#" method="get">
@@ -86,6 +93,13 @@ function appendSearch() {
         </form>
     `;
     searchContainer.insertAdjacentHTML('beforeend', html);
+    const searchButton = document.getElementById('search-submit');
+    const searchInput = document.getElementById('search-input');
+    searchButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        filterSearch(searchInput);
+        addCardstoDOM(filteredEmployees);
+    });
 }
 
 
@@ -95,7 +109,7 @@ fetch(APIurl)
     .then(results => employees = results)
     .then(results => addCardstoDOM(employees))
     .catch(results => Error(console.log(results)))
-    .finally(appendSearch());
+    .finally(appendSearch(filterSearch));
 
 
 
