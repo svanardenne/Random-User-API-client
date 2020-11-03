@@ -8,9 +8,6 @@ const body = document.getElementsByTagName('BODY')[0];
 const cardContainer = document.getElementById('gallery');
 let employees = [];
 let modalIndex;
-let modalClose;
-let prev;
-let next;
 
 function addCardstoDOM(fetchResults) {
     console.log(fetchResults);
@@ -62,7 +59,18 @@ function createModal(employeeData, index) {
 }
 
 
-
+function toggleModal(employeeData, contentContainer, index) {
+    contentContainer.innerHTML = `
+        <img class="modal-img" src="${employeeData[index].picture.large}" alt="profile picture">
+        <h3 id="name" class="modal-name cap">${employeeData[index].name.first} ${employeeData[index].name.last}</h3>
+        <p class="modal-text">${employeeData[index].email}</p>
+        <p class="modal-text cap">${employeeData[index].location.city}</p>
+        <hr>
+        <p class="modal-text">${employeeData[index].phone}</p>
+        <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
+        <p class="modal-text">Birthday: 10/21/2015</p>
+    `
+}
 
 
 
@@ -80,10 +88,26 @@ fetch(APIurl)
 cardContainer.addEventListener('click', (e) => {
     if (e.target !== cardContainer) {
         const card = e.target.closest('.card');
-        let index = card.getAttribute('data-index');
-        body.insertAdjacentHTML('beforeend', createModal(employees, index));
+        modalIndex = parseInt(card.getAttribute('data-index'));
+        console.log(modalIndex);
+        body.insertAdjacentHTML('beforeend', createModal(employees, modalIndex));
         const modalContainer = document.querySelector('.modal-container');
-        modalClose = document.getElementById('modal-close-btn');
+        const contentContainer = document.querySelector('.modal-info-container');
+        const modalClose = document.getElementById('modal-close-btn');
+        const prev = document.getElementById('modal-prev');
+        const next = document.getElementById('modal-next');
+        prev.addEventListener('click', () => {
+            if (modalIndex > 0) {
+                modalIndex = modalIndex - 1;
+                toggleModal(employees, contentContainer, modalIndex);
+            }
+        });
+        next.addEventListener('click', () => {
+            if (modalIndex < 11) {
+                modalIndex = modalIndex + 1;
+                toggleModal(employees, contentContainer, modalIndex);
+            }
+        });
         modalClose.addEventListener('click', () => {
             body.removeChild(modalContainer);
             });
