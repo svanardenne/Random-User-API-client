@@ -14,7 +14,7 @@ html, body {
 }
 
 body {
-    font-family: "Nunito", sans-serif;
+    font-family: 'Varela Round', sans-serif;
     text-align: center;
     background: rgba(235, 235, 235, 0.9);
 }
@@ -90,6 +90,7 @@ header h1 {
     background: rgba(245, 245, 245, 0.9);
     border-radius: 0.25em;
     border: 1px solid rgba(50, 50, 50, 0.3);
+    box-shadow: 5px 5px 10px #888888;
     transition: .4s ease-out;
     overflow: hidden;
 }
@@ -250,6 +251,7 @@ header h1 {
     .card:hover {
         background: rgba(255, 255, 255, 1);
         border: 1px solid rgba(50, 50, 50, 0.9);
+        transform: rotateZ(.5deg);
     }
 
     .card:hover .card-text {
