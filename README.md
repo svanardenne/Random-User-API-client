@@ -1,4 +1,5 @@
-# fullstack-project-5
+# Random User API client
+ - Website pulls user information from the randomuser.me API and displays it in a paginated format.
 
 ***Original HTML and CSS provided by Team Treehouse***
 
