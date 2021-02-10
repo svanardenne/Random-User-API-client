@@ -11,5 +11,4 @@ Changes made to base HTML and CSS:
  - Added a slight rotate transform to the cards.
  - Added a box shadow to cards
  
- ## Live Site
- [Random User API Client](http://eldritchwebdesign.com/Random-User-API-client)
+ ## [Live Site](http://eldritchwebdesign.com/Random-User-API-client)
