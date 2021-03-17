@@ -11,4 +11,4 @@ Changes made to base HTML and CSS:
  - Added a slight rotate transform to the cards.
  - Added a box shadow to cards
  
- ## [Live Site](http://www.shaunvanardenne.ca/Random-User-API-client)
+ ## [Live Site](https://shaunvanardenne.ca/Random-User-API-client)
